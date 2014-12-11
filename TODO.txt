@@ -1,0 +1,42 @@
+This is the TODO file for the Universe Viewer.  
+
+Members of the Viewer Development Work-Group and of the partnered development teams can look at this to see what needs to be done still.
+
+Each item when completed will have a (complete) next to it.
+
+TODO:
+
+- Viewer rebranding to the Universe Viewer brand.
+
+- Update OpenGL to the latest version for better quality graphics.
+
+- Change logos to the Universe Viewer Logos.
+
+- Add complete support for mesh.
+
+- Add new skins that are more futuristic.
+
+- Update overall code to ensure compliance with current operating systems.
+NOTE: Windows xp can handle .Net 4.0 However there is no known fix for Windows XP users
+to integrate in .Net 4.5.  Additionally Most viewers will be upgrading to be built with
+.Net 4.5 in the near future per LL standards for meeting protocol on Secondlife.  We will
+try to make the Universe viewer smart enough to detect the operating system and run properly
+regardless of the standards to ensure continued support for remaining Windows XP users.
+
+- Add integrated roleplay combat HUD (Thanks to BriaKallista Starfinder).
+NOTE: This should help reduce some lag seen on most grids where combat meters such as the 
+widely used Gorean meter is used with compatibility with weapons used in roleplay.
+
+- Add a mechanism to allow the viewer to know if it is connecting to a region based grid
+or a planet based grid.
+NOTE: This will ensure support for grids that are region based if the user chooses to log on to more
+then one grid with the viewer.
+
+- Add support for Aurora/WhiteCore (Var & Infinite regions and some other things used by this particular
+platform).
+NOTE: This will only come into play if the grid is a region based grid.  Virtual Universe, Second Galaxy, and related grids
+running on the planet based system will not be affected by this as there will be no region boundaries.
+
+- Add in method to tell the viewer how to decode planets.
+
+- More will be added as we start going through code.
