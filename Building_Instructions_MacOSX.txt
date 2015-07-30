@@ -1,0 +1,220 @@
+Getting development tools
+
+Make sure Xcode is installed, it's a free download from Apple. Make sure cmake is installed, use at least a 2.8.x version.
+
+    If you are using OSX 10.6, Xcode 3 will be used.
+    If you are using OSX 10.7 “Lion” or OSX 10.8 “Mountain Lion”, the build will use Xcode 4.
+    If you are using OSX 10.9, the build will use Xcode 5 and the Clang compiler.
+
+Additional third party libraries
+
+If you want to use licensed FMOD Ex or KDU build libraries (they are optional) you have to provision these yourself. If you're licensing these with Phoenix-Firestorm, ask for the libraries for fmodex and kdu. Put them into:
+
+      /opt/firestorm
+
+If you're a community builder, you'll need to build these libraries yourself, then change your autobuild.xml file to point to your own versions, or create a different autobuild.xml with your customizations, and use this with autobuild instead of our default autobuild.xml There are some examples of how to build FMOD Ex on the LL Wiki and opensource-dev mailing list. We've created a non-KDU build target to make this easier. Everywhere you see “ReleaseFS” below, use “ReleaseFS_open” instead. This will perform the same build, using openjpeg instead of KDU.
+
+Available premade firestorm-specific build targets:
+
+ReleaseFS		(includes KDU, FMOD)
+ReleaseFS_open		(no KDU, no FMOD)
+RelWithDebInfo_open	(no KDU, no FMOD)
+
+To build firestorm:
+
+      autobuild build -c ReleaseFS                        
+
+Other examples:
+
+      autobuild configure -c ReleaseFS                    # basic configuration step, don't build, just configure
+      autobuild configure -c ReleaseFS -- --clean         # clean the output area first, then configure
+      autobuild configure -c ReleaseFS -- --chan Private-Yourname   # configure with a custom channel
+
+      autobuild build -c ReleaseFS --no-configure              # default quick rebuild
+      autobuild build -c ReleaseFS --no-configure -- --clean   # Clean rebuild
+
+Any of the configure options can also be used (and do the same thing) with the build options. Typical LL autobuild configure options should also work, as long as they don't duplicate configuration we are already doing.
+
+Logs:
+
+      Look for logs in build-darwin-i386/logs
+
+Output:
+
+      Look for output in build-darwin-i386/newview/Release
+
+Firestorm Mac Builds with Xcode 4.4.2+
+
+This step is unnecessary if you are building Rev 38021+
+Prerequisites
+
+This is needed for compiling any viewer based on the LL open source code and only needs to be done once.
+
+All installations are done with default settings (unless told specific) if you change that you’re on your own.
+Acquire MacOSX.10.6.sdk
+
+You will need a copy of the OSX 10.6 SDK, which can be found in Xcode 4.3.3 for Lion. You can obtain this using a free DeveloperID at https://developer.apple.com/
+
+Once you have the Xcode 4.3.3 disc image, mount it on your system. Now, download and run this shell script:
+
+xcode_fix.sh
+
+    #!/bin/sh
+
+    echo 'Linden fix for Xcode 4.6 to have 10.6SDK so it can build older branches.'
+
+    echo 'Be sure to have the xcode_4.3_for_lion.dmg mounted! This script pulls from that volume!'
+
+    echo 'Creating temporary directory. . .'
+
+    mkdir temp
+
+    pushd temp
+
+    echo 'Copying 10.6SDK. . .'
+
+    cp -R /Volumes/Xcode/Xcode.app/Contents//Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk .
+
+    echo 'Linking darwin10 folders as darwin11. . .'
+
+    pushd MacOSX10.6.sdk/Developer/usr/llvm-gcc-4.2/lib/gcc/
+
+    ln -s i686-apple-darwin10 i686-apple-darwin11
+
+    popd
+
+    pushd MacOSX10.6.sdk/usr/lib/gcc/
+
+    ln -s i686-apple-darwin10 i686-apple-darwin11
+
+    popd
+
+    pushd MacOSX10.6.sdk/usr/lib/
+
+    ln -s i686-apple-darwin10 i686-apple-darwin11
+
+    popd
+
+    echo 'Changing ownership and moving SDK to machine. . . Password required for sudo commands.'
+
+    sudo chown -R root:wheel MacOSX10.6.sdk
+
+    sudo mv MacOSX10.6.sdk/ /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+
+    popd
+
+    rm -rf temp
+
+    echo 'Xcode fix complete.'
+
+If that finishes successfully, you're ready for the next step.
+Install required development tools
+
+    First, install Mac Ports from http://www.macports.org/
+    Next, using Mac Ports, install Mercurial and CMake. Open a terminal window and type:
+
+sudo port install mercurial cmake
+
+* You may prefer using Homebrew to Mac Ports which can be found here http://brew.sh/
+* Install the required tools with this command:
+
+brew install mercurial cmake
+
+Python 2.7 is also required, but will be installed as a dependency to Mercurial.
+Install Autobuild
+
+Autobuild is a Linden Lab resource that does all the hard work.
+
+In a Terminal window type:
+
+mkdir ~/tmp
+cd ~/tmp
+hg clone http://hg.secondlife.com/autobuild/
+cd autobuild
+./setup.py
+sudo ./setup.py install
+
+Set up your source code tree
+
+Plan your directory structure ahead of time. If you are going to be producing changes or patches you will be cloning a copy of an unaltered source code tree for every change or patch you make, so you might want to have all this work stored in its own directory. If you are a casual compiler and won't be producing any changes, you can use one directory. For this document, I will assume $HOME/firestorm.
+
+mkdir ~/phoenix
+cd ~/phoenix
+git clone https://github.com/Virtual-Universe/VirtualViewer.git
+
+This can take a while, it's a rather large download.
+Prepare third party libraries
+
+Most third party libraries needed to build the viewer will be automatically downloaded for you and installed into the build directory within your source tree during compilation. Some need to be manually prepared and are not normally required when using an open source configuration (ReleaseFS_open).
+FMOD Ex using autobuild
+
+Note: This typically needs to only be done once since fmodex rarely changes.
+
+    Enter these commands into the command prompt:
+
+hg clone https://bitbucket.org/NickyD/3p-fmodex
+cd 3p-fmodex
+autobuild build
+autobuild package
+
+Near the top of the output you will see the package name written and the md5 hash below it:
+
+wrote /Users/kittin/tmp/3p-fmod/fmod-3.75-darwin-20130105.tar.bz2'
+md5 3b0d38f2a17ff1b73c8ab6dffbd661eb''
+
+Next, update Firestorms autobuild.xml file to use your FMOD Ex.
+
+cd /firestorm/phoenix-firestorm-lgpl
+cp autobuild.xml my_autobuild.xml
+export AUTOBUILD_CONFIG_FILE=my_autobuild.xml
+
+Copy the fmodex path and md5 value from the package process into this command:
+
+autobuild installables edit fmodex platform=darwin hash=<md5 value> url=file:///<fmod path>
+
+For example:
+
+autobuild installables edit fmodex platform=darwin hash=c3f696412ef74f1559c6d023efe3a087 url=file://$HOME/firestorm/3p-fmodex/fmodex-3.75-darwin-20130105.tar.bz2
+
+Note: Having to copy autobuild.xml and modify the copy from within a cloned repository is a lot of work for every repository you make, but this is the only way to guarantee you pick up upstream changes to autobuild.xml and do not send up a modified autobuild.xml when you do an hg push.
+Configuring the Viewer
+
+If you are building with Fmod and have followed the previous Fmod setup instructions AND you are now using a new terminal you will need to reset the environment variable with
+
+export AUTOBUILD_CONFIG_FILE=my_autobuild.xml
+
+Then:
+
+cd ~/firestorm/phoenix
+
+ autobuild configure -c ReleaseFS_open
+
+This will compile with all defaults and without third party libraries.
+Configuration Switches
+
+There are a number of switches you can use to modify the configuration process. The name of each switch is followed by its type and then by the value you want to set.
+
+    FMOD (bool) controls if the Fmod package is incorporated into the viewer. You must have performed the Fmod installation steps in Fmod_using_autobuild for this to work.
+    LL_TESTS (bool) controls if the tests are compiled and run. There are quite a lot of them so excluding them is recommended unless you have some reason to need one or
+    more of them.
+
+TIP: OFF and NO are the same as FALSE; anything else is considered to be TRUE
+
+Example:
+
+autobuild configure -c ReleaseFS_open -- -DLL_TESTS:BOOL=FALSE -DFMOD:BOOL=TRUE
+
+Compiling the Viewer
+
+If you are building with Fmod and have followed the previous Fmod setup instructions AND you are now using a new terminal you will need to reset the environment variable with
+
+export AUTOBUILD_CONFIG_FILE=my_autobuild.xml
+
+Then:
+
+cd ~/phoenix
+autobuild build -c ReleaseFS_open --no-configure
+
+Now, sit back, read War and Peace, calculate PI to 50 places, tour the country, whatever you desire. Compiling will take quite a bit of time.
+
+NOTE: It is possible to use autobuild to do both the configure step (only needed once) and the build step with one command (autobuild build -c ReleaseFS [– config options] . I find it is clearer if these steps are done separately, but can save a bit of time if done together.
