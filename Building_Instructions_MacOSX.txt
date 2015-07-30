@@ -20,7 +20,7 @@ ReleaseFS		(includes KDU, FMOD)
 ReleaseFS_open		(no KDU, no FMOD)
 RelWithDebInfo_open	(no KDU, no FMOD)
 
-To build firestorm:
+To build phoenix:
 
       autobuild build -c ReleaseFS                        
 
@@ -43,7 +43,7 @@ Output:
 
       Look for output in build-darwin-i386/newview/Release
 
-Firestorm Mac Builds with Xcode 4.4.2+
+Phoenix Mac Builds with Xcode 4.4.2+
 
 This step is unnecessary if you are building Rev 38021+
 Prerequisites
@@ -185,7 +185,7 @@ export AUTOBUILD_CONFIG_FILE=my_autobuild.xml
 
 Then:
 
-cd ~/firestorm/phoenix
+cd ~/phoenix
 
  autobuild configure -c ReleaseFS_open
 
