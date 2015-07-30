@@ -8,6 +8,10 @@ TODO:
 
 - Viewer rebranding to the Universe Viewer brand.
 
+- Backport upgrades from Singularity (this must happen first)
+
+- Backport upgrades from Firestorm (this can only happen after successful backport of singularity upgrades)
+
 - Update OpenGL to the latest version for better quality graphics.
 
 - Change logos to the Universe Viewer Logos.
